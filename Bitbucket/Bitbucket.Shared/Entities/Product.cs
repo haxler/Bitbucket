@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Bitbucket.Shared.Interfaces;
 
 namespace Bitbucket.Shared.Entities;
 
-public class Product
+public class Product : IEntityWithName
 {
     public int Id { get; set; }
 

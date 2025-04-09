@@ -1,41 +1,53 @@
 ﻿@page "/products"
 
-<h3>Productos</h3>
+<div class="card">
+    <div class="card-header">
+        <span>
+            <i class="bi bi-box2" /> Productos
+            <a class="btn btn-sm btn-primary float-end" href="/products/create"><i class="bi bi-plus-square" /> Nuevo Producto</a>
+        </span>
+    </div>
+    <div class="card-body">
+        <Filter PlaceHolder="Buscar producto..." Callback=@FilterCallBack />
+        <GenericList MyList="Products">
+            <Body>
 
-<div class="mb-3">
-    <a class="btn btn-primary" href="/products/create">Nuevo Producto</a>
+
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Precio</th>
+                            <th>Cantidad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var product in Products!)
+                        {
+                            <tr>
+                                <td>
+                                    @product.Name
+                                </td>
+                                <td>
+                                    @($"{product.Price:C2}")
+                                </td>
+                                <td>
+                                    @($"{product.Quantity:N2}")
+                                </td>
+                                <td>
+                                    <a href="/products/edit/@product.Id" class="btn btn-warning btn-sm"><i class="bi bi-pencil" /> Editar</a>
+                                    <button @onclick=@(() => DeleteAsync(product)) class="btn btn-sm btn-danger"><i class="bi bi-trash" /> Borrar</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <Pagination CurrentPage="currentPage"
+                            TotalPages="totalPages"
+                            SelectedPage="SelectedPageAsync"
+                            RecordsNumber="SelectedRecordsNumberAsync" />
+            </Body>
+        </GenericList>
+    </div>
 </div>
-
-<GenericList MyList="Products">
-    <Body>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Precio</th>
-                    <th>Cantidad</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var product in Products!)
-                {
-                    <tr>
-                        <td>
-                            @product.Name
-                        </td>
-                        <td>
-                            @($"{product.Price:C2}")
-                        </td>
-                        <td>
-                            @($"{product.Quantity:N2}")
-                        </td>
-                        <td>
-                            <a class="btn btn-warning">Editar</a>
-                            <button class="btn btn-danger">Borrar</button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </Body>
-</GenericList>
