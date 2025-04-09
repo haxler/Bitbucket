@@ -1,66 +1,40 @@
-﻿using Bitbucket.Backend.Data;
+﻿using Bitbucket.Backend.UnitsOfWork.Interfaces;
+using Bitbucket.Shared.DTOs;
 using Bitbucket.Shared.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Bitbucket.Backend.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ProductsController : ControllerBase
+public class ProductsController : GenericController<Product>
 {
-    private readonly DataContext _context;
+    private readonly IProductsUnitOfWork _productsUnitOfWork;
 
-    public ProductsController(DataContext context)
+    public ProductsController(IGenericUnitOfWork<Product> unit, IProductsUnitOfWork productsUnitOfWork) : base(unit)
     {
-        _context = context;
+        _productsUnitOfWork = productsUnitOfWork;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAsync()
+    public override async Task<IActionResult> GetAsync([FromQuery] PaginationDTO pagination)
     {
-        return Ok(await _context.Products.ToListAsync());
-    }
-
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetAsync(int id)
-    {
-        var product = await _context.Products.FirstOrDefaultAsync(c => c.Id == id);
-        if (product == null)
+        var response = await _productsUnitOfWork.GetAsync(pagination);
+        if (response.WasSuccess)
         {
-            return NotFound();
+            return Ok(response.Result);
         }
-
-        return Ok(product);
+        return BadRequest();
     }
 
-    [HttpPost]
-    public async Task<IActionResult> PostAsync(Product product)
+    [HttpGet("totalPages")]
+    public override async Task<IActionResult> GetPagesAsync([FromQuery] PaginationDTO pagination)
     {
-        _context.Add(product);
-        await _context.SaveChangesAsync();
-        return Ok(product);
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteAsync(int id)
-    {
-        var product = await _context.Products.FirstOrDefaultAsync(c => c.Id == id);
-        if (product == null)
+        var action = await _productsUnitOfWork.GetTotalPagesAsync(pagination);
+        if (action.WasSuccess)
         {
-            return NotFound();
+            return Ok(action.Result);
         }
-
-        _context.Remove(product);
-        await _context.SaveChangesAsync();
-        return NoContent();
-    }
-
-    [HttpPut]
-    public async Task<IActionResult> PutAsync(Product product)
-    {
-        _context.Update(product);
-        await _context.SaveChangesAsync();
-        return Ok(product);
+        return BadRequest();
     }
 }
