@@ -37,4 +37,26 @@ public class ProductsController : GenericController<Product>
         }
         return BadRequest();
     }
+
+    [HttpPost("full")]
+    public async Task<IActionResult> PostFullAsync(Product product)
+    {
+        var action = await _productsUnitOfWork.AddFullAsync(product);
+        if (action.WasSuccess)
+        {
+            return Ok(action.Result);
+        }
+        return NotFound(action.Message);
+    }
+
+    [HttpPut("full")]
+    public async Task<IActionResult> PutFullAsync(Product product)
+    {
+        var action = await _productsUnitOfWork.UpdateFullAsync(product);
+        if (action.WasSuccess)
+        {
+            return Ok(action.Result);
+        }
+        return NotFound(action.Message);
+    }
 }

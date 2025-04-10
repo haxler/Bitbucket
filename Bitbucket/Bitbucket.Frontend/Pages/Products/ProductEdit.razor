@@ -1,5 +1,12 @@
-﻿<h3>ProductEdit</h3>
+﻿@page "/products/edit/{Id:int}"
 
-@code {
+<h3>Editar Productos</h3>
 
+@if (product is null)
+{
+    <Loading />
+}
+else
+{
+    <FormWithName @ref="productForm" Label="Productos" Model="product" OnValidSubmit="EditAsync" ReturnAction="Return" />
 }

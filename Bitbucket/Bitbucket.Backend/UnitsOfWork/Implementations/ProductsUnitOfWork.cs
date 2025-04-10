@@ -19,4 +19,8 @@ public class ProductsUnitOfWork : GenericUnitOfWork<Product>, IProductsUnitOfWor
     public override async Task<ActionResponse<IEnumerable<Product>>> GetAsync(PaginationDTO pagination) => await _productsRepository.GetAsync(pagination);
 
     public override async Task<ActionResponse<int>> GetTotalPagesAsync(PaginationDTO pagination) => await _productsRepository.GetTotalPagesAsync(pagination);
+
+    public async Task<ActionResponse<Product>> AddFullAsync(Product product) => await _productsRepository.AddFullAsync(product);
+
+    public async Task<ActionResponse<Product>> UpdateFullAsync(Product product) => await _productsRepository.UpdateFullAsync(product);
 }

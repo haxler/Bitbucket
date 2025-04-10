@@ -1,0 +1,5 @@
+﻿@page "/products/create"
+
+<h3>Creacion de productos</h3>
+
+<FormWithName @ref="productForm" Label="Productos" Model="product" OnValidSubmit="CreateAsync" ReturnAction="Return" />

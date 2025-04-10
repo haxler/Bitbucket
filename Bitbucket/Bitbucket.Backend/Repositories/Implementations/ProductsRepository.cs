@@ -54,4 +54,86 @@ public class ProductsRepository : GenericRepository<Product>, IProductsRepositor
             Result = totalPages
         };
     }
+
+    public async Task<ActionResponse<Product>> AddFullAsync(Product product)
+    {
+        try
+        {
+            var newProduct = new Product
+            {
+                Name = product.Name,
+                Price = product.Price,
+                Quantity = product.Quantity,
+            };
+
+            _context.Add(newProduct);
+            await _context.SaveChangesAsync();
+            return new ActionResponse<Product>
+            {
+                WasSuccess = true,
+                Result = newProduct
+            };
+        }
+        catch (DbUpdateException)
+        {
+            return new ActionResponse<Product>
+            {
+                WasSuccess = false,
+                Message = "Ya existe un producto con el mismo nombre."
+            };
+        }
+        catch (Exception exception)
+        {
+            return new ActionResponse<Product>
+            {
+                WasSuccess = false,
+                Message = exception.Message
+            };
+        }
+    }
+
+    public async Task<ActionResponse<Product>> UpdateFullAsync(Product productDTO)
+    {
+        try
+        {
+            var product = await _context.Products
+                .FirstOrDefaultAsync(x => x.Id == productDTO.Id);
+            if (product == null)
+            {
+                return new ActionResponse<Product>
+                {
+                    WasSuccess = false,
+                    Message = "Producto no existe"
+                };
+            }
+
+            product.Name = productDTO.Name;
+            product.Price = productDTO.Price;
+            product.Quantity = productDTO.Quantity;
+
+            _context.Update(product);
+            await _context.SaveChangesAsync();
+            return new ActionResponse<Product>
+            {
+                WasSuccess = true,
+                Result = product
+            };
+        }
+        catch (DbUpdateException)
+        {
+            return new ActionResponse<Product>
+            {
+                WasSuccess = false,
+                Message = "Ya existe un producto con el mismo nombre."
+            };
+        }
+        catch (Exception exception)
+        {
+            return new ActionResponse<Product>
+            {
+                WasSuccess = false,
+                Message = exception.Message
+            };
+        }
+    }
 }
